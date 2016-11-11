@@ -41,8 +41,13 @@ void partition8_5(int s[], int n, int k)
 	int i, j, x; /* counters */
 	p[0] = 0; /* construct prefix sums */
 
+	cout << "p[] = ";
 	for (i = 1; i <= n; i++)
+	{
 		p[i] = p[i - 1] + s[i];
+		cout << p[i] << " ";
+	}
+	cout << endl;
 
 	for (i = 1; i <= n; i++)
 		m[i][1] = p[i]; /* initialize boundaries */
@@ -50,6 +55,16 @@ void partition8_5(int s[], int n, int k)
 	for (j = 1; j <= k; j++)
 		m[1][j] = s[1];
 
+	cout << "d[][] = " << endl;
+	for (int i = 1; i <= n; i++)
+	{
+		for (int j = 1; j <= k; j++)
+			cout << d[i][j] << " ";
+
+		cout << endl;
+	}
+	cout << endl;
+	
 	for (i = 2; i <= n; i++) /* evaluate main recurrence */
 	{
 		for (j = 2; j <= k; j++)
@@ -64,6 +79,21 @@ void partition8_5(int s[], int n, int k)
 				{
 					m[i][j] = cost;
 					d[i][j] = x;
+
+					cout << "d[][], m[][] = " << endl;
+					for (int ii = 1; ii <= n; ii++)
+					{
+						for (int jj = 1; jj <= k; jj++)
+							cout << d[ii][jj] << " ";
+
+						cout << "\t\t";
+
+						for (int jj = 1; jj <= k; jj++)
+							cout << m[ii][jj] << " ";
+
+						cout << endl;
+					}
+					cout << endl;
 				}
 			}
 		}
@@ -77,9 +107,9 @@ void Example8_5()
 {
 	cout << "Running Example 8.5:  " << endl << endl;
 
-	int n, k;
+	int n = 12, k = 4;
 
-	cout << "Enter n-value:  ";
+	/*cout << "Enter n-value:  ";
 	cin >> n;
 	while (cin.get() != '\n');
 
@@ -89,15 +119,20 @@ void Example8_5()
 	cin >> k;
 	while (cin.get() != '\n');
 
-	k = min(k, n);
+	k = min(k, n);*/
 
 	int valArray[MAXN + 1];
 
 	srand(time(NULL));
 
 	// Initialize the random array... values between 0 and 10000
+	cout << "valArray[] = ";
 	for (int i = 1; i <= n; i++)
+	{
 		valArray[i] = rand() % 10001;
+		cout << valArray[i] << " ";
+	}
+	cout << endl;
 
 	partition8_5(valArray, n, k);
 }
