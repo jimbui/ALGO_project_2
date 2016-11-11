@@ -8,7 +8,7 @@
 
 using namespace std;
 
-static class FileManager
+class FileManager
 {
 private:
 public:
