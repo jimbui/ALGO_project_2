@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <math.h>
 
 using namespace std;
 
@@ -14,7 +15,7 @@ void JohnsAlgorithm(vector<int> problem, vector<int>& partitions, vector<int> pr
 	// Memoization
 	vector<int> partitionSums = vector<int>(k + 1); // O(k)
 
-	while (true)
+	while (incrementFlag)
 	{
 		if (incrementFlag && partitionLevel >= 1)
 		{
@@ -107,8 +108,8 @@ void TryProject2(vector<int> problem, int n, int t)
 	int k = 1;
 	int offset = 0;
 	vector<int>partitions = RyansAlgorithm(problem, prefixSums, offset, k, n, t);
-
 	// Print array with basic partitioning.
+	
 	int curPart = 1;
 	for (int i = 1; i <= n; i++)
 	{
@@ -122,9 +123,11 @@ void TryProject2(vector<int> problem, int n, int t)
 			cout << " ";
 		cout << " ";
 	}
+
 	cout << endl;
 
 	// Partition array
+
 	JohnsAlgorithm(problem, partitions, prefixSums, offset, k, n, t);
 }
 
