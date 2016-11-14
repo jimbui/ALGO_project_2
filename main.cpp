@@ -1,134 +1,96 @@
+// brought to you by:  john santoro , ryan arredondo , and jim bui.
+
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <math.h>
 
-using namespace std;
+using namespace std ;
 
-// Exhaustively iteratively search for the best partition set
-void JohnsAlgorithm(vector<int> problem, vector<int>& partitions, vector<int> prefixSum, int offset, int& k, int n, int t)
+int inequalityCalc(int *partitionedArray , int threshold , int size)
 {
-	int partitionLevel = 1;  // Start at 1st partition and work right if current one is valid.
-	// int sumLeftInequalityScores = 0;
-	bool incrementFlag = true;
-	
-	// Memoization
-	vector<int> partitionSums = vector<int>(k + 1); // O(k)
-
-	while (incrementFlag)
-	{
-		if (incrementFlag && partitionLevel >= 1)
-		{
-			partitionSums[partitionLevel] = (int)pow(t - (prefixSum[partitions[offset + partitionLevel]] - prefixSum[partitions[offset + partitionLevel - 1]]), 2) +
-				partitionSums[partitionLevel - 1];
-			
-			if (partitionLevel == k - 1)
-				incrementFlag = false;
-
-			if (incrementFlag)
-				partitionLevel++;
-		}
-		else if (!incrementFlag)
-		{
-			partitions[partitionLevel]++;
-		}
-
-		if (partitionLevel < 1)  // Break if solution needs to be returned.
-			break;
-	}
+    int score = 0 ;
+    for (int l = 0 ; l < size ; l++) if (partitionedArray[l] != 0) score += pow((threshold - partitionedArray[l]) , 2) ;
+    return score;
 }
 
-// Defines leftmost location for all partitions, and returns the partition set
-vector<int> RyansAlgorithm(vector<int> problem, vector<int> prefixSum, int& offset, int& k, int n, int t)
+void naivePartition(vector<int> array , int threshold , int size)
 {
-	vector<int> partitionSet(n + 2);  // Due to +1 offset
-	int partEnd = n;
-	offset = n;
-	partitionSet[offset + 1] = n;  // Get the end of the partition set.
-
-	for (int i = n - 1; i >= 0; i--)  // Iterate backwards through array to determine how many partitions there must be.
-	{
-		int partitionVal = prefixSum[partEnd] - prefixSum[i];
-
-		if (partitionVal > t)
-		{
-			k++;
-			i++;
-			partitionSet[offset--] = i;
-			partEnd = i;
-		}
-	}
-
-	return partitionSet;
-}
-
-// O(n); get each prefix sum
-vector<int> GetPrefixSums(vector<int> problem, int n)
-{
-	vector<int> prefixSums = vector<int>(n + 2);
-	prefixSums[0] = 0;
-
-	for (int i = 1; i <= n; i++)
-		prefixSums[i] = prefixSums[i - 1] + problem[i - 1];  // i - 1 for problem b/c no offset exists.
-
-	return prefixSums;
-}
-
-void TryProject2(vector<int> problem, int n, int t)
-{
-	// cout << "Here is project 2:  " << endl << endl;
-
-	// for (int i = 0; i < 1; i++)
-	// {
-	/*int* problem = new int[7];
-
-	problem[0] = 5;
-	problem[1] = 2;
-	problem[2] = 3;
-	problem[3] = 4;
-	problem[4] = 10;
-	problem[5] = 5;
-	problem[6] = 3;
-
-	int n = 7;
-	int t = 10;*/
-
-	// cout << "Problem (" << i + 1 << ")" << endl;
-	vector<int> prefixSums = GetPrefixSums(problem, n);
-
-	// Get and print prefix sums.
-	cout << "Prefix sums:  ";
-	for (int i = 0; i <= n; i++)
-	{
-		cout << prefixSums[i] << " ";
-	}
-	cout << endl;
-
-	// Get basic partitions.
-	int k = 1;
-	int offset = 0;
-	vector<int>partitions = RyansAlgorithm(problem, prefixSums, offset, k, n, t);
-	// Print array with basic partitioning.
-	
-	int curPart = 1;
-	for (int i = 1; i <= n; i++)
-	{
-		cout << problem[i - 1] << " ";
-		if (partitions[offset + curPart] == i)
-		{
-			cout << "|";
-			curPart++;
-		}
-		else
-			cout << " ";
-		cout << " ";
-	}
-
-	cout << endl;
-
-	// Partition array
-
-	JohnsAlgorithm(problem, partitions, prefixSums, offset, k, n, t);
+    int partitionedArray[size];
+    int inequalityArray[size];
+    vector<int> sizeArray (size);
+    int sum = 0; // sum of defualt array
+    int i = size - 1; //iterates through partitionedArray which holds the sum; starts at back
+    int j = size - 1; //iterates through array which is the initial array; starts at back
+    int k = 0; // iterates up through inequalityArray holds the inequality score for all valid cases
+    int l = 0; //iterates up through size array which holds the number of elements in each partition in order
+    int check = 0; //partition check make sure it's below threshold
+    int total = 1; // number of partitions; currently return value of final case
+    int count = 0; //counts the elements in each partition of the array
+    int stopFlag = 9999; //checks the inequality score for the current valid partition
+    int minScore = 9999; // holds the best inequality score we've gotten so far
+    
+    for(int i = 0; i < size; i++){
+        partitionedArray[i] = 0;
+        inequalityArray[i] = 0;
+        sum += array[i];
+    }
+    
+    sizeArray[0] = size;
+    partitionedArray[0] = sum;
+    partitionedArray[i] = 0;
+    while(partitionedArray[0] > threshold){
+        while(partitionedArray[i] < threshold){
+            check = partitionedArray[i] + array[j];
+            count= sizeArray[i] + 1;
+            if(check <= threshold){
+                partitionedArray[i] = check;
+                partitionedArray[0] -= array[j];
+                sizeArray[i] = count;
+                sizeArray[0] -= 1;
+            }else{
+                break;
+            }
+            j--;
+            //sizeArray[l] = count;
+            //if(l+1 == sizeArray.size()){
+             //   sizeArray.resize(sizeArray.size() * 2);
+            //}
+            
+            //Checks Inequality score and stores it in an array
+            if(partitionedArray[0] <= threshold){
+                stopFlag = inequalityCalc(partitionedArray, threshold, size);
+                if (stopFlag < minScore){
+                    inequalityArray[k] = stopFlag;
+                    minScore = stopFlag;
+                    k++;
+                }else{
+                    j++;
+                    partitionedArray[i] -= array[j];
+                    partitionedArray[0] += array[j];
+                    sizeArray[i] -= 1;
+                    sizeArray[0] += 1;
+                    break;
+                }
+            }
+        }
+        total++;
+        l++;
+        i--;
+    }
+    
+    cout << "Total: " << total;
+    for(int i = 0; i < size; i++){
+        if(partitionedArray[i] != 0){
+                    //Delete after we figure out all the bugs
+            // cout << "Partitioned Array: " << partitionedArray[i] << endl;
+            // cout << "Inequality Array: " << inequalityArray[i] << endl;
+            
+            //This is suppose to keep track of all the elements in out most optimal partition
+            cout << " " << sizeArray[i];// << endl;
+        }
+    }
+    cout << endl;
 }
 
 int main() 
@@ -158,8 +120,6 @@ int main()
 				input_file >> values_array[j] ;
 			}
 
-			// values_array is now populated.
-
 			// this just prints the array.
 
 			std::cout << "        " ;
@@ -170,7 +130,7 @@ int main()
 
 			cout << endl << endl;
 
-			TryProject2(values_array, data_count, max_partition_size);
+			naivePartition(values_array , max_partition_size , data_count) ;
 
 			std::cout << " \n\n" ;
 		}
