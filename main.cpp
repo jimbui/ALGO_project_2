@@ -84,7 +84,7 @@ void naivePartition(vector<int> array , int threshold , int size)
         i--;
     }
     
-    cout << "Total: " << total;
+    output_file << "Total: " << total;
     for(int i = 0; i < size; i++){
         if(partitionedArray[i] != 0){
                     //Delete after we figure out all the bugs
@@ -92,7 +92,7 @@ void naivePartition(vector<int> array , int threshold , int size)
             // cout << "Inequality Array: " << inequalityArray[i] << endl;
             
             //This is suppose to keep track of all the elements in out most optimal partition
-            cout << " " << sizeArray[i];// << endl;
+            output_file << " " << sizeArray[i];// << endl;
         }
     }
     cout << endl;
