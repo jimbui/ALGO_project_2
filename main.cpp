@@ -84,7 +84,7 @@ void naivePartition(vector<int> array , int threshold , int size)
         i--;
     }
     
-    output_file << "Total: " << total;
+    output_file << total ;
     for(int i = 0; i < size; i++){
         if(partitionedArray[i] != 0){
                     //Delete after we figure out all the bugs
@@ -95,9 +95,9 @@ void naivePartition(vector<int> array , int threshold , int size)
             output_file << " " << sizeArray[i];// << endl;
         }
     }
-    cout << endl;
+    output_file << " \n" ;
 
-    output_file << "hello world.\n" ;
+    // output_file << "hello world.\n" ;
     output_file.close() ;
 }
 
@@ -131,22 +131,18 @@ int main()
 			}
 
 			/*
-
 			// this just prints the array.
-
 			std::cout << "        " ;
-
 			for (int j = 0 ; j < data_count ; j++) {
 				std::cout << values_array[j] << " " ;
 			}
-
 			cout << endl << endl;
 	
 			*/
 
 			naivePartition(values_array , max_partition_size , data_count) ;
 
-			std::cout << " \n\n" ;
+			// std::cout << " \n\n" ;
 		}
 
 		input_file.close() ;
